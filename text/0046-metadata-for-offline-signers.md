@@ -80,11 +80,23 @@ Values for:
 
 1. `u8` metadata shortening protocol version, 
 2. SCALE-encoded `ExtrinsicMetadata`,
-3. SCALE-encoded `spec_version` `String`
-4. SCALE-encoded `spec_name` String,
+3. SCALE-encoded `spec_version` `String`,
+4. SCALE-encoded `spec_name` `String`,
 5. `u16` base58 prefix,
 6. `u8` decimals value or `0u8` if no units are defined,
-7. SCALE-encoded `tokenSymbol` String defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty string if no base units are defined,
+7. SCALE-encoded `tokenSymbol` `String` defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty string if no base units are defined,
+
+```
+struct MetadataDescriptor { // really a scale-encoded enum, thus first field is enum value - only 0x01 currently supported.
+  protocol_version: u8,
+  extrinsic_metadata: Vec<u8>, // SCALE from `ExtrinsicMetadata
+  spec_version: Vec<u8>, // SCALE form `String`
+  spec_name: Vec<u8>, // SCALE from `String`
+  base58_prefix: u16,
+  decimals: u8,
+  token_symbol: Vec<u8>, // SCALE from `String`
+}
+```
 
 constitute metadata descriptor. This is minimal information that is, together with (shortened) types registry, sufficient to decode any signable transaction.
 
@@ -124,8 +136,8 @@ Node 0 is root
 
 1. The metadata is converted into lean modular form (vector of chunks)
 2. A Merkle tree is constructed from the metadata chunks
-3. A root of tree is merged with Metadata Descriptor
-4. Resulting value is a constant to be included in signature to prove that the metadata seen by cold device is genuine
+3. A root of tree (as a left element) is merged with Metadata Descriptor (as a right element)
+4. Resulting value is a constant to be included in `additionalSigned` to prove that the metadata seen by cold device is genuine
 
 ### Metadata modularization
 
