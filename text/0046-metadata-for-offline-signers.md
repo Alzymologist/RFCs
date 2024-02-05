@@ -84,11 +84,11 @@ Values for:
 1. `u8` metadata shortening protocol version (as encoded enum variant), 
 2. The `Id` of type of the outermost Call enum (u32) as described in https://docs.rs/frame-metadata/latest/frame_metadata/v15/struct.ExtrinsicMetadata.html#structfield.call_ty
 3. Vector of `SignedExtension` structs as defined in Metadata V15 (vector of named (`String`) pairs of `TypeId` (`u32`))
-4. `spec_version` `String` (see explanation below) as found in the `RuntimeVersion` as of generating the metadata. While this information can also be found in the metadata, it is hidden in a big blob of data. To not being required to transfer this big blob of data, we directly add these information here,
-5. `spec_name` `String` as of found in the `RuntimeVersion`,
+4. `spec_version` `String` (see explanation below) as found in the `RuntimeVersion` at generation of the metadata. While this information can also be found in the metadata, it is hidden in a big blob of data. To avoid transferring this big blob of data, we directly add these values here,
+5. `spec_name` `String` as found in the `RuntimeVersion`,
 6. `u16` ss58 prefix,
 7. `u8` decimals value or `0u8` if no units are defined,
-8. `tokenSymbol` `String` defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty string if no base units are defined,
+8. `tokenSymbol` `String` defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty `String` if no base units are defined,
 
 ```
 enum MetadataDescriptor {
