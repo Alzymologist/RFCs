@@ -115,7 +115,7 @@ struct SignedExtensionMetadata {
 
 constitute metadata descriptor. This is minimal information that is, together with (shortened) types registry, sufficient to decode any signable transaction.
 
-**Note on `spec_version`**: this type is described in metadata; it is indeed u32 in Polkadot and in Kusama and most other networks and thus could be defined in typesafe manner, but theoretically it could be anything, probably even enum similar to how Era is constructed - why not? - as long as it is serializable. Something like 
+**Note on `spec_version`**: this type is described in metadata; it is indeed u32 in Polkadot and Kusama and most other networks and thus could be defined in a typesafe manner, but theoretically, it could be anything, as long as it is serializable. Something like 
 
 ```
 struct version {
