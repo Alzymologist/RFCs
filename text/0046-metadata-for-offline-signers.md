@@ -84,7 +84,7 @@ Values for:
 1. `u8` metadata shortening protocol version (as encoded enum variant), 
 2. The `Id` of type of the outermost Call enum (u32) as described in https://docs.rs/frame-metadata/latest/frame_metadata/v15/struct.ExtrinsicMetadata.html#structfield.call_ty
 3. Vector of `SignedExtension` structs as defined in Metadata V15 (vector of named (`String`) pairs of `TypeId` (`u32`))
-4. `spec_version` `String` as found in the `RuntimeVersion` as of generating the metadata. While this information can also be found in the metadata, it is hidden in a big blob of data. To not being required to transfer this big blob of data, we directly add these information here,
+4. `spec_version` `String` (see explanation below) as found in the `RuntimeVersion` as of generating the metadata. While this information can also be found in the metadata, it is hidden in a big blob of data. To not being required to transfer this big blob of data, we directly add these information here,
 5. `spec_name` `String` as of found in the `RuntimeVersion`,
 6. `u16` ss58 prefix,
 7. `u8` decimals value or `0u8` if no units are defined,
@@ -114,6 +114,22 @@ struct SignedExtensionMetadata {
 ```
 
 constitute metadata descriptor. This is minimal information that is, together with (shortened) types registry, sufficient to decode any signable transaction.
+
+**Note on `spec_version`**: this type is described in metadata; it is indeed u32 in Polkadot and in Kusama and most other networks and thus could be defined in typesafe manner, but theoretically it could be anything, probably even enum similar to how Era is constructed - why not? - as long as it is serializable. Something like 
+
+```
+struct version {
+  major: u32,
+  minor: u32,
+  notes: String,
+}
+```
+
+would be reasonable solution that might be adopted in future.
+
+We've really seen a couple of networks using u16 there in the past. Not that it's all that important, but as long as our protocol would be the only limitation - it would be a limitation for our protocol; it would be unwise to enforce it here without first enforcing it upstream.
+
+The version is not exactly algebraic number - it has comparison operation, but no other algebra is defined; the primitive variable with these properties is really `String`, not integer. This is silly, we've argued a lot about this internally, but with naive JS-style solution we have all the flexibility we might want and no real downsides (as from point of view of our protocol, it's just an opaque constant - key for database search).
 
 #### Merkle tree
 
