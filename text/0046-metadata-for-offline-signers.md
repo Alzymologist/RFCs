@@ -384,7 +384,7 @@ Some slightly out of spec systems might experience breaking changes as new conte
 
 ## Testing, Security, and Privacy
 
-All implementations are required to follow strictly the RFC to generate the metadata hash. This includes which hash function to use and how to construct the metadata types tree. So, all implementations are following the same security criteria. As the chains will calculate the metadata hash at compile time, the build process needs to be trusted. However, this is already a solved problem in the Polkadot ecosystem by using reproducible builds. So, anyone can rebuild a chain runtime to ensure that a proposal is actually containing the changes as advertised.
+All implementations MUST follow the RFC to generate the metadata hash. This includes which hash function to use and how to construct the metadata types tree. So, all implementations are following the same security criteria. As the chains will calculate the metadata hash at compile time, the build process generally needs to be trusted. However, this is already a solved problem in the Polkadot ecosystem using reproducible builds. So, anyone can rebuild a chain runtime to ensure that a proposal is actually containing the changes as advertised.
 Implementation can also be tested easily against each other by taking some metadata and ensuring that they all come to the same metadata hash.
 Privacy of users should also not be impacted. This assumes that wallets will generate the metadata hash locally and don't leak any information to third party services about which chunks a user will send to its offline wallet. Besides that there is no leak of private information as getting the raw metadata from the chain is an operation that is done by almost everyone.
 
