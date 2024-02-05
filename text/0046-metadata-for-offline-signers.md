@@ -61,7 +61,7 @@ Implementing this RFC would remove requirement to maintain metadata portals manu
 
 ## Explanation
 
-Detailed description of metadata shortening and digest process is provided in [metadata-shortener](https://github.com/Alzymologist/metadata-shortener) crate (see `cargo doc --open` and examples). Below are presented algorithms of the process.
+Detailed description of metadata shortening and digest process is provided in [metadata-shortener](https://docs.rs/metadata-shortener/latest/metadata_shortener/) crate. Below are presented algorithms of the process.
 
 ### Definitions
 
@@ -70,13 +70,14 @@ Detailed description of metadata shortening and digest process is provided in [m
 
 Values for:
 
-1. `u8` metadata shortening protocol version, 
-2. `ExtrinsicMetadata`,
-3. `spec_version` `String`,
-4. `spec_name` `String`,
-5. `u16` ss58 prefix,
-6. `u8` decimals value or `0u8` if no units are defined,
-7. `tokenSymbol` `String` defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty string if no base units are defined,
+1. `u8` metadata shortening protocol version (as encoded enum variant), 
+2. Id of registry type encoding all extrinsic calls (u32),
+3. Vector of `SignedExtension` structs as defined in Metadata V15 (vector of named (`String`) pairs of `TypeId` (`u32`))
+4. `spec_version` `String`,
+5. `spec_name` `String`,
+6. `u16` ss58 prefix,
+7. `u8` decimals value or `0u8` if no units are defined,
+8. `tokenSymbol` `String` defined on chain to identify the name of currency (available for example through `system.properties()` RPC call) or empty string if no base units are defined,
 
 ```
 enum MetadataDescriptor {
@@ -85,12 +86,19 @@ enum MetadataDescriptor {
 }
 
 struct MetadataDescriptorV1 {
-  extrinsic_metadata: ExtrinsicMetadata
-  spec_version: String
-  spec_name: String
+  call_ty: u32, // TypeId
+  signed_extensions: Vec<SignedExtensionsMetadata>,
+  spec_version: String,
+  spec_name: String,
   ss58_prefix: u16,
   decimals: u8,
   token_symbol: String
+}
+
+struct SignedExtensionMetadata {
+  identifier: String,
+  ty: u32, // TypeId
+  additional_signed: u32, // TypeId
 }
 ```
 
@@ -137,9 +145,14 @@ Node 0 is root
 
 ### Metadata modularization
 
-Structure of types in shortened metadata exactly matches structure of types in `scale-info` at MetadataV14 state, but `doc` field is always empty
+Structure of types in shortened metadata exactly matches structure of types in `scale-info` at MetadataV15 state, but `doc` field is always empty
 
 ```
+struct Chunk {
+  id: u32,
+  type: Type,
+}
+
 struct Type {
   path: Path, // vector of strings
   type_params: Vec<TypeParams>,
@@ -158,16 +171,17 @@ struct TypeParams {
 3. Chunks are sorted by `id` in ascending order; chunks with same `id` are sorted by enum variant index in ascending order.
 
 ```
-types_registry = metadataV14.types
-modularized_registry = EmptyVector<id, type>
+types_registry = metadataV15.types
+modularized_registry = EmptyVector<Chunk>
 for (id, type) in types.registry.iterate_enumerate {
   type.doc = empty_vector
   if (type is ReduceableEnum) { // false for 0-variant enums
     for variant in type.variants.iterate {
       variant_type = Type {
-        path: type.path
-        type_params: empty_vector
-        type_def: TypeDef::Variant(variants: [variant])
+        path: type.path,
+        type_params: empty_vector,
+        type_def: TypeDef::Variant(variants: [variant]),
+        doc: empty_vector,
       }
       modularized_registry.push(id, variant_type)
     }
