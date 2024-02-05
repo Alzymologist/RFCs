@@ -115,19 +115,7 @@ struct SignedExtensionMetadata {
 
 constitute metadata descriptor. This is minimal information that is, together with (shortened) types registry, sufficient to decode any signable transaction.
 
-**Note on `spec_version`**: this type is described in metadata; it is indeed u32 in Polkadot and Kusama and most other networks and thus could be defined in a typesafe manner, but theoretically, it could be anything, as long as it is serializable. Something like 
-
-```
-struct version {
-  major: u32,
-  minor: u32,
-  notes: String,
-}
-```
-
-would be reasonable solution that might be adopted in future.
-
-We saw a couple of networks using u16 there in the past. Not that it's all that important, but as long as our protocol would be the only limitation - it would be a limitation for our protocol; it would be unwise to enforce it here without first enforcing it upstream.
+**Note on `spec_version`**: this type is described in metadata; it is indeed u32 in Polkadot and Kusama and most other networks and thus could be defined in a typesafe manner, but theoretically, it could be anything, as long as it is serializable. We saw a couple of networks using u16 there in the past. Not that it's all that important, but as long as our protocol would be the only limitation - it would be a limitation for our protocol; it would be unwise to enforce it here without first enforcing it upstream.
 
 The version is not exactly an algebraic number - it has comparison operation, but no other algebra is defined; the primitive variable with these properties is really a `String`, not an integer. We've argued a lot about this internally, but with a naive JS-style solution, we have all the flexibility we might want and no real downsides (as from the point of view of our protocol, it's just an opaque constant - key for database search).
 
