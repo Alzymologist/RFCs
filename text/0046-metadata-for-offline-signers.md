@@ -268,7 +268,7 @@ for (id, type) in types.registry.iterate_enumerate {
         path: type.path,
         type_params: empty_vector,
         type_def: TypeDef::Variant(variants: [variant]),
-        doc: empty_vector,
+        docs: empty_vector,
       }
       modularized_registry.push(id, variant_type)
     }
