@@ -71,7 +71,7 @@ The idea for this RFC was brought up by runtime implementors and was extensively
 
 ## Explanation
 
-he FRAME metadata is providing a lot of information about a FRAME based runtime. It contains information about the pallets, the calls per pallet, the storage entries per pallet, information about runtime apis and type information about most of the types that are used in the runtime. For decoding transactions on an offline wallet we mainly require these type information. Most of the other information in the FRAME metadata are actually not required for the decoding and thus we can remove them. Thus, we have come up with a custom representation of the metadata and how this custom metadata is chunked, ensuring that we only need to send the chunks requiring for decoding a certain transaction to the offline wallet.
+The FRAME metadata provides a lot of information about a FRAME-based runtime. It contains information about the pallets, the calls per pallet, the storage entries per pallet, information about runtime APIs and type information about most of the types used in the runtime. For decoding transactions on an offline wallet, we mainly require this type of information. Most of the other information in the FRAME metadata is actually not required for the decoding, and thus, we can remove them. Thus, we have come up with a custom representation of the metadata and how this custom metadata is chunked, ensuring that we only need to send the chunks required for decoding a certain transaction to the offline wallet.
 
 A reference implementation of this process is provided in [metadata-shortener](https://docs.rs/metadata-shortener/latest/metadata_shortener/) crate.
 
